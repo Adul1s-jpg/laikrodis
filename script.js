@@ -1,41 +1,54 @@
-document.addEventListener("DOMContentLoaded", () => {
-    let batteryLevel = 100;
-    let steps = 0;
+// Funkcija laikui atnaujinti
+function updateTime() {
+    const now = new Date();
+    const hours = now.getHours().toString().padStart(2, '0');
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+    const seconds = now.getSeconds().toString().padStart(2, '0');
 
-    function updateTime() {
-        const now = new Date();
-        document.getElementById("time").textContent = now.toLocaleTimeString("lt-LT", { hour: "2-digit", minute: "2-digit" });
-        document.getElementById("date").textContent = now.toISOString().split("T")[0];
+    document.getElementById('hours').innerText = hours;
+    document.getElementById('minutes').innerText = minutes;
+    document.getElementById('seconds').innerText = seconds;
+}
+
+// Funkcija baterijos lygiui mažinti
+let batteryLevel = 100;
+function updateBattery() {
+    if (batteryLevel > 0) {
+        batteryLevel--;
+        document.getElementById('battery').innerText = `${batteryLevel}%`;
     }
+}
 
-    function drainBattery() {
-        if (batteryLevel > 0) {
-            batteryLevel--;
-            document.getElementById("battery").textContent = batteryLevel + "%";
-        }
-    }
+setInterval(updateBattery, 60000);
 
-    document.getElementById("steps").addEventListener("click", () => {
-        if (steps < 10000) {
-            steps++;
-        } else {
-            steps = 0;
-        }
-        document.getElementById("steps").textContent = `👣 ${steps}`;
-    });
+//Heartrate
+function generateRandomHeartbeat() {
+    // Atsitiktinis širdies ritmas nuo 60 iki 100 bpm
+    return Math.floor(Math.random() * (100 - 60 + 1)) + 60;
+}
 
-    function updateHeartRate() {
-        document.getElementById("heartRate").textContent = Math.floor(Math.random() * 40) + 60;
-    }
+function updateHeartbeat() {
+    const heartbeatElement = document.getElementById("heartbeat-value");
+    heartbeatElement.textContent = generateRandomHeartbeat();
+}
 
-    function updateNotifications() {
-        document.getElementById("notifications").textContent = Math.floor(Math.random() * 5);
-    }
+// Atnaujinti širdies ritmą kas 3 sekundes
+setInterval(updateHeartbeat, 3000);
 
-    setInterval(updateTime, 1000);
-    setInterval(drainBattery, 60000);
-    setInterval(updateHeartRate, 5000);
-    setInterval(updateNotifications, 10000);
+// Žingsnių skaičiavimas su animacija
+let steps = 3457;
+const stepsElement = document.getElementById('steps');
+stepsElement.addEventListener('click', function () {
+    steps += Math.floor(Math.random() * 10) + 1;
+    stepsElement.innerHTML = `🚶 <span>${steps}</span> / 6,000`;
 
-    updateTime();
+    // Animacija
+    stepsElement.style.transform = 'scale(1.2)';
+    setTimeout(() => {
+        stepsElement.style.transform = 'scale(1)';
+    }, 200);
 });
+
+// Laiko atnaujinimas kas sekundę
+setInterval(updateTime, 1000);
+updateTime();
